@@ -26,6 +26,12 @@ while [ "$#" != 0 ]; do
         --jdk )
             JDK_VERSION="last"
             ;;
+        --scala=* )
+            SCALA_VERSION="${1#*=}"
+            ;;
+        --scala )
+            SCALA_VERSION="last"
+            ;;
         --* )
             echo "Option \`${1}\` is not supported." >&1
             exit 1
@@ -36,14 +42,18 @@ while [ "$#" != 0 ]; do
     shift
 done
 
+if [ -z "$install_opt" ]; then
+    install_opt="--install"
+fi
+
+export PREFIX
+
 if [ "$#" = 0 ]; then
     command=""
 else
     command="$1"
     shift
 fi
-
-export PREFIX
 
 case "$command" in
     "jar" )
@@ -64,6 +74,9 @@ case "$command" in
     "jshell" )
         JDK_VERSION=${JDK_VERSION:-last}
         ;;
+    "scala" )
+        SCALA_VERSION=${SCALA_VERSION:-last}
+        ;;
     "serialver" )
         JDK_VERSION=${JDK_VERSION:-last}
         ;;
@@ -71,12 +84,15 @@ case "$command" in
         break
 esac
 
-if [ -z "$install_opt" ]; then
-    install_opt="--install"
+if [ -n "${SCALA_VERSION:-}" ]; then
+    JDK_VERSION=${JDK_VERSION:-last}
 fi
 
 if [ -n "${JDK_VERSION:-}" ]; then
     . <(bash $MULANG_SOURCE_DIR/install-openjdk.sh $install_opt $JDK_VERSION)
+fi
+if [ -n "${SCALA_VERSION:-}" ]; then
+    . <(bash $MULANG_SOURCE_DIR/install-scala.sh $install_opt $SCALA_VERSION)
 fi
 
 if ! which "$command" >/dev/null; then
