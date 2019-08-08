@@ -32,6 +32,12 @@ while [ "$#" != 0 ]; do
         --scala )
             SCALA_VERSION="last"
             ;;
+        --drill=* )
+            DRILL_VERSION="${1#*=}"
+            ;;
+        --drill )
+            DRILL_VERSION="last"
+            ;;
         --* )
             echo "Option \`${1}\` is not supported." >&1
             exit 1
@@ -56,6 +62,9 @@ else
 fi
 
 case "$command" in
+    "drill-embedded" )
+        DRILL_VERSION=${DRILL_VERSION:-last}
+        ;;
     "jar" )
         JDK_VERSION=${JDK_VERSION:-last}
         ;;
@@ -87,12 +96,18 @@ esac
 if [ -n "${SCALA_VERSION:-}" ]; then
     JDK_VERSION=${JDK_VERSION:-last}
 fi
+if [ -n "${DRILL_VERSION:-}" ]; then
+    JDK_VERSION=${JDK_VERSION:-last}
+fi
 
 if [ -n "${JDK_VERSION:-}" ]; then
     . <(bash $MULANG_SOURCE_DIR/install-openjdk.sh $install_opt $JDK_VERSION)
 fi
 if [ -n "${SCALA_VERSION:-}" ]; then
     . <(bash $MULANG_SOURCE_DIR/install-scala.sh $install_opt $SCALA_VERSION)
+fi
+if [ -n "${DRILL_VERSION:-}" ]; then
+    . <(bash $MULANG_SOURCE_DIR/install-drill.sh $install_opt $DRILL_VERSION)
 fi
 
 if ! which "$command" >/dev/null; then

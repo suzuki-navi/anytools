@@ -16,23 +16,23 @@ PREFIX="${PREFIX:-$HOME/.anytools}"
 
 # https://www.scala-lang.org/download/all.html
 
-LAST_VERSION=2.13.0
+LAST_VERSION=1.16.0
 
 if [ $version = "last" ]; then
     version=$LAST_VERSION
 fi
 
-url="https://downloads.lightbend.com/scala/${version}/scala-${version}.tgz"
-fname="scala-${version}.tgz"
+url="http://www.apache.org/dyn/closer.lua?filename=drill/drill-$version/apache-drill-$version.tar.gz&action=download"
+fname="apache-drill-$version.tar.gz"
 
 ####################################################################################################
 # インストール
 ####################################################################################################
 
 (
-    if [ ! -x "$PREFIX/scala-${version}/bin/scala" -a $install_opt = "--install" ]; then
+    if [ ! -x "$PREFIX/drill-${version}/bin/drill-embedded" -a $install_opt = "--install" ]; then
 
-        tmppath="$PREFIX/scala-${version}-tmp-$$"
+        tmppath="$PREFIX/drill-${version}-tmp-$$"
         mkdir -p $tmppath
 
         echo "curl -Ssf -L $url > $tmppath/$fname"
@@ -40,10 +40,9 @@ fname="scala-${version}.tgz"
         echo "tar xzf $tmppath/$fname -C $tmppath"
         tar xzf $tmppath/$fname -C $tmppath
 
-        echo mv $tmppath/scala-$version "$PREFIX/scala-${version}"
-        mv $tmppath/scala-$version "$PREFIX/scala-${version}"
+        echo mv "$tmppath/apache-drill-${version}" "$PREFIX/drill-${version}"
+        mv "$tmppath/apache-drill-${version}" "$PREFIX/drill-${version}"
 
-        rm -rf $tmppath
     fi
 ) >&2
 
@@ -51,7 +50,10 @@ fname="scala-${version}.tgz"
 # 実行環境設定
 ####################################################################################################
 
-echo "export SCALA_HOME=\"$PREFIX/scala-${version}\""
-echo "export PATH=\"\$SCALA_HOME/bin:\$PATH\""
+echo "export DRILL_MAX_DIRECT_MEMORY=${DRILL_MAX_DIRECT_MEMORY:-"1G"}"
+echo "export DRILL_HEAP=${DRILL_HEAP:-"1G"}"
+echo "export DRILLBIT_CODE_CACHE_SIZE=${DRILLBIT_CODE_CACHE_SIZE:-"1G"}"
+
+echo "export PATH=\"$PREFIX/drill-${version}/bin:\$PATH\""
 
 ####################################################################################################

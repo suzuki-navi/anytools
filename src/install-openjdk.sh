@@ -69,8 +69,8 @@ fi
 
         echo "curl -Ssf -L $url > $tmppath/$fname"
         curl -Ssf -L $url > $tmppath/$fname
-        echo "cd $tmppath; tar xzf $fname"
-        ( cd $tmppath; tar xzf $fname )
+        echo "tar xzf $tmppath/$fname -C $tmppath"
+        tar xzf $tmppath/$fname -C $tmppath
 
         if [ $os_name = "osx" ]; then
             echo mv $tmppath/$tardirname.jdk "$PREFIX/jdk-${version}"
