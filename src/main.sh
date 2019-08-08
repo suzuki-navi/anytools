@@ -32,6 +32,12 @@ while [ "$#" != 0 ]; do
         --scala )
             scala_version="last"
             ;;
+        --python=* )
+            python_version="${1#*=}"
+            ;;
+        --python )
+            python_version="last"
+            ;;
         --drill=* )
             drill_version="${1#*=}"
             ;;
@@ -83,6 +89,12 @@ case "$command" in
     "jshell" )
         jdk_version=${jdk_version:-last}
         ;;
+    "python" )
+        python_version=${python_version:-last}
+        ;;
+    "pipenv" )
+        python_version=${python_version:-last}
+        ;;
     "scala" )
         scala_version=${scala_version:-last}
         ;;
@@ -105,6 +117,9 @@ if [ -n "${jdk_version:-}" ]; then
 fi
 if [ -n "${scala_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-scala.sh
+fi
+if [ -n "${python_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-python.sh
 fi
 if [ -n "${drill_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-drill.sh
