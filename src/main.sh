@@ -52,7 +52,7 @@ if [ -z "$install_opt" ]; then
     install_opt="--install"
 fi
 
-export PREFIX
+export PREFIX="${PREFIX:-$HOME/.anytools}"
 
 if [ "$#" = 0 ]; then
     command=""
