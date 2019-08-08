@@ -21,22 +21,22 @@ while [ "$#" != 0 ]; do
             PREFIX="${1#*=}"
             ;;
         --jdk=* )
-            JDK_VERSION="${1#*=}"
+            jdk_version="${1#*=}"
             ;;
         --jdk )
-            JDK_VERSION="last"
+            jdk_version="last"
             ;;
         --scala=* )
-            SCALA_VERSION="${1#*=}"
+            scala_version="${1#*=}"
             ;;
         --scala )
-            SCALA_VERSION="last"
+            scala_version="last"
             ;;
         --drill=* )
-            DRILL_VERSION="${1#*=}"
+            drill_version="${1#*=}"
             ;;
         --drill )
-            DRILL_VERSION="last"
+            drill_version="last"
             ;;
         --* )
             echo "Option \`${1}\` is not supported." >&1
@@ -63,51 +63,51 @@ fi
 
 case "$command" in
     "drill-embedded" )
-        DRILL_VERSION=${DRILL_VERSION:-last}
+        drill_version=${drill_version:-last}
         ;;
     "jar" )
-        JDK_VERSION=${JDK_VERSION:-last}
+        jdk_version=${jdk_version:-last}
         ;;
     "java" )
-        JDK_VERSION=${JDK_VERSION:-last}
+        jdk_version=${jdk_version:-last}
         ;;
     "javac" )
-        JDK_VERSION=${JDK_VERSION:-last}
+        jdk_version=${jdk_version:-last}
         ;;
     "javadoc" )
-        JDK_VERSION=${JDK_VERSION:-last}
+        jdk_version=${jdk_version:-last}
         ;;
     "javap" )
-        JDK_VERSION=${JDK_VERSION:-last}
+        jdk_version=${jdk_version:-last}
         ;;
     "jshell" )
-        JDK_VERSION=${JDK_VERSION:-last}
+        jdk_version=${jdk_version:-last}
         ;;
     "scala" )
-        SCALA_VERSION=${SCALA_VERSION:-last}
+        scala_version=${scala_version:-last}
         ;;
     "serialver" )
-        JDK_VERSION=${JDK_VERSION:-last}
+        jdk_version=${jdk_version:-last}
         ;;
     * )
         break
 esac
 
-if [ -n "${SCALA_VERSION:-}" ]; then
-    JDK_VERSION=${JDK_VERSION:-last}
+if [ -n "${scala_version:-}" ]; then
+    jdk_version=${jdk_version:-last}
 fi
-if [ -n "${DRILL_VERSION:-}" ]; then
-    JDK_VERSION=${JDK_VERSION:-last}
+if [ -n "${drill_version:-}" ]; then
+    jdk_version=${jdk_version:-last}
 fi
 
-if [ -n "${JDK_VERSION:-}" ]; then
-    . <(bash $MULANG_SOURCE_DIR/install-openjdk.sh $install_opt $JDK_VERSION)
+if [ -n "${jdk_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-openjdk.sh
 fi
-if [ -n "${SCALA_VERSION:-}" ]; then
-    . <(bash $MULANG_SOURCE_DIR/install-scala.sh $install_opt $SCALA_VERSION)
+if [ -n "${scala_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-scala.sh
 fi
-if [ -n "${DRILL_VERSION:-}" ]; then
-    . <(bash $MULANG_SOURCE_DIR/install-drill.sh $install_opt $DRILL_VERSION)
+if [ -n "${drill_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-drill.sh
 fi
 
 if ! which "$command" >/dev/null; then

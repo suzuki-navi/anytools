@@ -1,12 +1,3 @@
-#!/bin/bash
-
-set -Ceu
-# -C リダイレクトでファイルを上書きしない
-# -e コマンドの終了コードが1つでも0以外になったら直ちに終了する
-# -u 設定されていない変数が参照されたらエラー
-
-install_opt=$1
-version=$2
 
 ####################################################################################################
 # バージョン管理
@@ -14,7 +5,7 @@ version=$2
 
 # https://jdk.java.net/archive/
 
-LAST_VERSION=12
+LAST_JDK_VERSION=12
 
 # version
 #   11
@@ -32,26 +23,26 @@ else
     exit 1
 fi
 
-if [ $version = "last" ]; then
-    version=$LAST_VERSION
+if [ $jdk_version = "last" ]; then
+    jdk_version=$LAST_JDK_VERSION
 fi
 
-if [ $version = 11 ]; then
-    version=11.0.2
-elif [ $version = 12 ]; then
-    version=12.0.0
+if [ $jdk_version = 11 ]; then
+    jdk_version=11.0.2
+elif [ $jdk_version = 12 ]; then
+    jdk_version=12.0.0
 fi
 
-if [ $version = 11.0.2 ]; then
+if [ $jdk_version = 11.0.2 ]; then
     url="https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_${os_name}-x64_bin.tar.gz"
-    fname="openjdk-${version}_${os_name}-x64_bin.tar.gz"
+    fname="openjdk-${jdk_version}_${os_name}-x64_bin.tar.gz"
     tardirname=jdk-11
-elif [ $version = 12.0.0 ]; then
+elif [ $jdk_version = 12.0.0 ]; then
     url="https://download.java.net/java/GA/jdk12/33/GPL/openjdk-12_${os_name}-x64_bin.tar.gz"
-    fname="openjdk-${version}_${os_name}-x64_bin.tar.gz"
+    fname="openjdk-${jdk_version}_${os_name}-x64_bin.tar.gz"
     tardirname=jdk-12
 else
-    echo "Unknown version: $version"
+    echo "Unknown jdk_version: $jdk_version"
     exit 1
 fi
 
@@ -60,9 +51,9 @@ fi
 ####################################################################################################
 
 (
-    if [ ! -x "$PREFIX/jdk-${version}/bin/java" -a $install_opt = "--install" ]; then
+    if [ ! -x "$PREFIX/jdk-${jdk_version}/bin/java" -a $install_opt = "--install" ]; then
 
-        tmppath="$PREFIX/jdk-${version}-tmp-$$"
+        tmppath="$PREFIX/jdk-${jdk_version}-tmp-$$"
         mkdir -p $tmppath
 
         echo "curl -Ssf -L $url > $tmppath/$fname"
@@ -71,11 +62,11 @@ fi
         tar xzf $tmppath/$fname -C $tmppath
 
         if [ $os_name = "osx" ]; then
-            echo mv $tmppath/$tardirname.jdk "$PREFIX/jdk-${version}"
-            mv $tmppath/$tardirname.jdk "$PREFIX/jdk-${version}"
+            echo mv $tmppath/$tardirname.jdk "$PREFIX/jdk-${jdk_version}"
+            mv $tmppath/$tardirname.jdk "$PREFIX/jdk-${jdk_version}"
         else
-            echo mv $tmppath/$tardirname "$PREFIX/jdk-${version}"
-            mv $tmppath/$tardirname "$PREFIX/jdk-${version}"
+            echo mv $tmppath/$tardirname "$PREFIX/jdk-${jdk_version}"
+            mv $tmppath/$tardirname "$PREFIX/jdk-${jdk_version}"
         fi
         rm -rf $tmppath
     fi
@@ -86,11 +77,11 @@ fi
 ####################################################################################################
 
 if [ $os_name = "osx" ]; then
-    echo "export JAVA_HOME=\"$PREFIX/jdk-${version}/Contents/Home\""
+    export JAVA_HOME="$PREFIX/jdk-${jdk_version}/Contents/Home"
 else
-    echo "export JAVA_HOME=\"$PREFIX/jdk-${version}\""
+    export JAVA_HOME="$PREFIX/jdk-${jdk_version}"
 fi
 
-echo "export PATH=\"\$JAVA_HOME/bin:\$PATH\""
+export PATH="$JAVA_HOME/bin:$PATH"
 
 ####################################################################################################
