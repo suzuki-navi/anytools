@@ -32,17 +32,23 @@ while [ "$#" != 0 ]; do
         --scala )
             scala_version="last"
             ;;
-        --python=* )
-            python_version="${1#*=}"
-            ;;
-        --python )
-            python_version="last"
-            ;;
         --drill=* )
             drill_version="${1#*=}"
             ;;
         --drill )
             drill_version="last"
+            ;;
+        --maven=* )
+            maven_version="${1#*=}"
+            ;;
+        --maven )
+            maven_version="last"
+            ;;
+        --python=* )
+            python_version="${1#*=}"
+            ;;
+        --python )
+            python_version="last"
             ;;
         --* )
             echo "Option \`${1}\` is not supported." >&1
@@ -89,6 +95,9 @@ case "$command" in
     "jshell" )
         jdk_version=${jdk_version:-last}
         ;;
+    "mvn" )
+        maven_version=${maven_version:-last}
+        ;;
     "python" )
         python_version=${python_version:-last}
         ;;
@@ -111,6 +120,9 @@ fi
 if [ -n "${drill_version:-}" ]; then
     jdk_version=${jdk_version:-last}
 fi
+if [ -n "${maven_version:-}" ]; then
+    jdk_version=${jdk_version:-last}
+fi
 
 if [ -n "${jdk_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-openjdk.sh
@@ -118,11 +130,14 @@ fi
 if [ -n "${scala_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-scala.sh
 fi
-if [ -n "${python_version:-}" ]; then
-    . $MULANG_SOURCE_DIR/install-python.sh
-fi
 if [ -n "${drill_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-drill.sh
+fi
+if [ -n "${maven_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-maven.sh
+fi
+if [ -n "${python_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-python.sh
 fi
 
 if ! which "$command" >/dev/null; then
