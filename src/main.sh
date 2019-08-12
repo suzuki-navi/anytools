@@ -111,7 +111,7 @@ case "$command" in
         jdk_version=${jdk_version:-last}
         ;;
     * )
-        break
+        ;;
 esac
 
 if [ -n "${scala_version:-}" ]; then
