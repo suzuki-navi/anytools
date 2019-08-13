@@ -44,6 +44,12 @@ while [ "$#" != 0 ]; do
         --maven )
             maven_version="last"
             ;;
+        --parquet-tools=* )
+            parquet_tools_version="${1#*=}"
+            ;;
+        --parquet-tools )
+            parquet_tools_version="last"
+            ;;
         --python=* )
             python_version="${1#*=}"
             ;;
@@ -98,6 +104,9 @@ case "$command" in
     "mvn" )
         maven_version=${maven_version:-last}
         ;;
+    "parquet-tools" )
+        parquet_tools_version=${parquet_tools_version:-last}
+        ;;
     "python" )
         python_version=${python_version:-last}
         ;;
@@ -123,6 +132,10 @@ fi
 if [ -n "${maven_version:-}" ]; then
     jdk_version=${jdk_version:-last}
 fi
+if [ -n "${parquet_tools_version:-}" ]; then
+    jdk_version=${jdk_version:-8}
+    maven_version=${maven_version:-last}
+fi
 
 if [ -n "${jdk_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-openjdk.sh
@@ -135,6 +148,9 @@ if [ -n "${drill_version:-}" ]; then
 fi
 if [ -n "${maven_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-maven.sh
+fi
+if [ -n "${parquet_tools_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-parquet-tools.sh
 fi
 if [ -n "${python_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-python.sh
