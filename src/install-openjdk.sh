@@ -27,16 +27,22 @@ if [ $jdk_version = "last" ]; then
     jdk_version=$LAST_JDK_VERSION
 fi
 
-if [ $jdk_version = 11 ]; then
+if [ $jdk_version = 8 ]; then
+    jdk_version=8.0.40
+elif [ $jdk_version = 11 ]; then
     jdk_version=11.0.2
 elif [ $jdk_version = 12 ]; then
     jdk_version=12.0.0
 fi
 
-if [ $jdk_version = 11.0.2 ]; then
+if [ $jdk_version = 8.0.40 ]; then
+    url="https://download.java.net/openjdk/jdk8u40/ri/openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz"
+    fname="openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz"
+    tardirname=java-se-8u40-ri
+elif [ $jdk_version = 11.0.2 ]; then
     url="https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_${os_name}-x64_bin.tar.gz"
     fname="openjdk-${jdk_version}_${os_name}-x64_bin.tar.gz"
-    tardirname=jdk-11
+    tardirname=jdk-11.0.2
 elif [ $jdk_version = 12.0.0 ]; then
     url="https://download.java.net/java/GA/jdk12/33/GPL/openjdk-12_${os_name}-x64_bin.tar.gz"
     fname="openjdk-${jdk_version}_${os_name}-x64_bin.tar.gz"
