@@ -1,13 +1,16 @@
 
+openjdk_version=$1
+action=$2
+
 ####################################################################################################
 # バージョン管理
 ####################################################################################################
 
 # https://jdk.java.net/archive/
 
-LAST_JDK_VERSION=12
-
 # version
+#   8
+#   8.0.40
 #   11
 #   11.0.2
 #   12
@@ -23,71 +26,75 @@ else
     exit 1
 fi
 
-if [ $jdk_version = "last" ]; then
-    jdk_version=$LAST_JDK_VERSION
+if [ ${openjdk_version:-last} = "last" ]; then
+    openjdk_version=12
 fi
 
-if [ $jdk_version = 8 ]; then
-    jdk_version=8.0.40
-elif [ $jdk_version = 11 ]; then
-    jdk_version=11.0.2
-elif [ $jdk_version = 12 ]; then
-    jdk_version=12.0.0
+if [ $openjdk_version = 8 ]; then
+    openjdk_version=8.0.40
+elif [ $openjdk_version = 11 ]; then
+    openjdk_version=11.0.2
+elif [ $openjdk_version = 12 ]; then
+    openjdk_version=12.0.0
 fi
 
-if [ $jdk_version = 8.0.40 ]; then
-    url="https://download.java.net/openjdk/jdk8u40/ri/openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz"
-    fname="openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz"
-    tardirname=java-se-8u40-ri
-elif [ $jdk_version = 11.0.2 ]; then
-    url="https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_${os_name}-x64_bin.tar.gz"
-    fname="openjdk-${jdk_version}_${os_name}-x64_bin.tar.gz"
-    tardirname=jdk-11.0.2
-elif [ $jdk_version = 12.0.0 ]; then
-    url="https://download.java.net/java/GA/jdk12/33/GPL/openjdk-12_${os_name}-x64_bin.tar.gz"
-    fname="openjdk-${jdk_version}_${os_name}-x64_bin.tar.gz"
-    tardirname=jdk-12
-else
-    echo "Unknown jdk_version: $jdk_version"
-    exit 1
+if [ $action = install ]; then
+    if [ $openjdk_version = 8.0.40 ]; then
+        url="https://download.java.net/openjdk/jdk8u40/ri/openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz"
+        fname="openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz"
+        tardirname=java-se-8u40-ri
+    elif [ $openjdk_version = 11.0.2 ]; then
+        url="https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_${os_name}-x64_bin.tar.gz"
+        fname="openjdk-${openjdk_version}_${os_name}-x64_bin.tar.gz"
+        tardirname=jdk-11.0.2
+    elif [ $openjdk_version = 12.0.0 ]; then
+        url="https://download.java.net/java/GA/jdk12/33/GPL/openjdk-12_${os_name}-x64_bin.tar.gz"
+        fname="openjdk-${openjdk_version}_${os_name}-x64_bin.tar.gz"
+        tardirname=jdk-12
+    else
+        echo "Unknown openjdk_version: $openjdk_version"
+        exit 1
+    fi
 fi
 
 ####################################################################################################
 # インストール
 ####################################################################################################
 
-(
-    if [ ! -x "$PREFIX/jdk-${jdk_version}/bin/java" -a $install_opt = "--install" ]; then
+if [ $action = install ]; then (
+    if [ ! -x "$PREFIX/openjdk-${openjdk_version}/bin/java" ]; then
 
-        tmppath="$PREFIX/jdk-${jdk_version}-tmp-$$"
+        tmppath="$PREFIX/openjdk-${openjdk_version}-tmp-$$"
         mkdir -p $tmppath
 
-        echo "curl -Ssf -L $url > $tmppath/$fname"
-        curl -Ssf -L $url > $tmppath/$fname
+        echo "curl -f -L $url > $tmppath/$fname"
+        curl -f -L $url > $tmppath/$fname
         echo "tar xzf $tmppath/$fname -C $tmppath"
         tar xzf $tmppath/$fname -C $tmppath
 
         if [ $os_name = "osx" ]; then
-            echo mv $tmppath/$tardirname.jdk "$PREFIX/jdk-${jdk_version}"
-            mv $tmppath/$tardirname.jdk "$PREFIX/jdk-${jdk_version}"
+            echo mv $tmppath/$tardirname.jdk "$PREFIX/openjdk-${openjdk_version}"
+            mv $tmppath/$tardirname.jdk "$PREFIX/openjdk-${openjdk_version}"
         else
-            echo mv $tmppath/$tardirname "$PREFIX/jdk-${jdk_version}"
-            mv $tmppath/$tardirname "$PREFIX/jdk-${jdk_version}"
+            echo mv $tmppath/$tardirname "$PREFIX/openjdk-${openjdk_version}"
+            mv $tmppath/$tardirname "$PREFIX/openjdk-${openjdk_version}"
         fi
         rm -rf $tmppath
     fi
-) >&2
+) >&2; fi
 
 ####################################################################################################
 # 実行環境設定
 ####################################################################################################
 
-if [ $os_name = "osx" ]; then
-    export JAVA_HOME="$PREFIX/jdk-${jdk_version}/Contents/Home"
-else
-    export JAVA_HOME="$PREFIX/jdk-${jdk_version}"
-fi
+if [ $action = env ]; then
+    if [ $os_name = "osx" ]; then
+        export JAVA_HOME="$PREFIX/openjdk-${openjdk_version}/Contents/Home"
+    else
+        export JAVA_HOME="$PREFIX/openjdk-${openjdk_version}"
+    fi
 
-export PATH="$JAVA_HOME/bin:$PATH"
+    export PATH="$JAVA_HOME/bin:$PATH"
+fi
 
 ####################################################################################################
