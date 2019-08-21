@@ -59,6 +59,12 @@ while [ "$#" != 0 ]; do
         --awscli )
             awscli_version="last"
             ;;
+        --jq=* )
+            jq_version="${1#*=}"
+            ;;
+        --jq )
+            jq_version="last"
+            ;;
         --* )
             echo "Option \`${1}\` is not supported." >&1
             exit 1
@@ -103,6 +109,9 @@ case "$command" in
         ;;
     "javap" )
         openjdk_version=${openjdk_version:-last}
+        ;;
+    "jq" )
+        jq_version=${jq_version:-last}
         ;;
     "jshell" )
         openjdk_version=${openjdk_version:-last}
@@ -167,6 +176,11 @@ if [ -n "${awscli_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-awscli.sh
     install_awscli $awscli_version install
     . <(install_awscli $awscli_version env)
+fi
+if [ -n "${jq_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-jq.sh
+    install_jq $jq_version install
+    . <(install_jq $jq_version env)
 fi
 
 if ! which "$command" >/dev/null; then
