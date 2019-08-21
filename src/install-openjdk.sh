@@ -1,6 +1,8 @@
 
-openjdk_version=$1
-action=$2
+install_openjdk () {
+
+local version=$1
+local action=$2
 
 ####################################################################################################
 # バージョン管理
@@ -16,7 +18,8 @@ action=$2
 #   12
 #   12.0.0
 
-uname=$(uname)
+local uname=$(uname)
+local os_name=
 if [ "$uname" = "Darwin" ]; then
     os_name='osx'
 elif [ "$uname" = "Linux" ]; then
@@ -26,33 +29,36 @@ else
     exit 1
 fi
 
-if [ ${openjdk_version:-last} = "last" ]; then
-    openjdk_version=12
+if [ ${version:-last} = "last" ]; then
+    version=12
 fi
 
-if [ $openjdk_version = 8 ]; then
-    openjdk_version=8.0.40
-elif [ $openjdk_version = 11 ]; then
-    openjdk_version=11.0.2
-elif [ $openjdk_version = 12 ]; then
-    openjdk_version=12.0.0
+if [ $version = 8 ]; then
+    version=8.0.40
+elif [ $version = 11 ]; then
+    version=11.0.2
+elif [ $version = 12 ]; then
+    version=12.0.0
 fi
 
+local url=
+local fname=
+local tardirname=
 if [ $action = install ]; then
-    if [ $openjdk_version = 8.0.40 ]; then
+    if [ $version = 8.0.40 ]; then
         url="https://download.java.net/openjdk/jdk8u40/ri/openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz"
         fname="openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz"
         tardirname=java-se-8u40-ri
-    elif [ $openjdk_version = 11.0.2 ]; then
+    elif [ $version = 11.0.2 ]; then
         url="https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_${os_name}-x64_bin.tar.gz"
-        fname="openjdk-${openjdk_version}_${os_name}-x64_bin.tar.gz"
+        fname="openjdk-${version}_${os_name}-x64_bin.tar.gz"
         tardirname=jdk-11.0.2
-    elif [ $openjdk_version = 12.0.0 ]; then
+    elif [ $version = 12.0.0 ]; then
         url="https://download.java.net/java/GA/jdk12/33/GPL/openjdk-12_${os_name}-x64_bin.tar.gz"
-        fname="openjdk-${openjdk_version}_${os_name}-x64_bin.tar.gz"
+        fname="openjdk-${version}_${os_name}-x64_bin.tar.gz"
         tardirname=jdk-12
     else
-        echo "Unknown openjdk_version: $openjdk_version"
+        echo "Unknown version: $version"
         exit 1
     fi
 fi
@@ -61,26 +67,23 @@ fi
 # インストール
 ####################################################################################################
 
-if [ $action = install ]; then (
-    if [ ! -x "$PREFIX/openjdk-${openjdk_version}/bin/java" ]; then
+if [ $action = install -a ! -x "$PREFIX/openjdk-${version}/bin/java" ]; then (
+    local tmppath="$PREFIX/openjdk-${version}-tmp-$$"
+    mkdir -p $tmppath
 
-        tmppath="$PREFIX/openjdk-${openjdk_version}-tmp-$$"
-        mkdir -p $tmppath
+    echo "curl -f -L $url > $tmppath/$fname"
+    curl -f -L $url > $tmppath/$fname
+    echo "tar xzf $tmppath/$fname -C $tmppath"
+    tar xzf $tmppath/$fname -C $tmppath
 
-        echo "curl -f -L $url > $tmppath/$fname"
-        curl -f -L $url > $tmppath/$fname
-        echo "tar xzf $tmppath/$fname -C $tmppath"
-        tar xzf $tmppath/$fname -C $tmppath
-
-        if [ $os_name = "osx" ]; then
-            echo mv $tmppath/$tardirname.jdk "$PREFIX/openjdk-${openjdk_version}"
-            mv $tmppath/$tardirname.jdk "$PREFIX/openjdk-${openjdk_version}"
-        else
-            echo mv $tmppath/$tardirname "$PREFIX/openjdk-${openjdk_version}"
-            mv $tmppath/$tardirname "$PREFIX/openjdk-${openjdk_version}"
-        fi
-        rm -rf $tmppath
+    if [ $os_name = "osx" ]; then
+        echo mv $tmppath/$tardirname.jdk "$PREFIX/openjdk-${version}"
+        mv $tmppath/$tardirname.jdk "$PREFIX/openjdk-${version}"
+    else
+        echo mv $tmppath/$tardirname "$PREFIX/openjdk-${version}"
+        mv $tmppath/$tardirname "$PREFIX/openjdk-${version}"
     fi
+    rm -rf $tmppath
 ) >&2; fi
 
 ####################################################################################################
@@ -89,12 +92,15 @@ if [ $action = install ]; then (
 
 if [ $action = env ]; then
     if [ $os_name = "osx" ]; then
-        export JAVA_HOME="$PREFIX/openjdk-${openjdk_version}/Contents/Home"
+        echo "export JAVA_HOME=\"$PREFIX/openjdk-${version}/Contents/Home\""
     else
-        export JAVA_HOME="$PREFIX/openjdk-${openjdk_version}"
+        echo "export JAVA_HOME=\"$PREFIX/openjdk-${version}\""
     fi
 
-    export PATH="$JAVA_HOME/bin:$PATH"
+    echo "export PATH=\"\$JAVA_HOME/bin:\$PATH\""
 fi
 
 ####################################################################################################
+
+}
+

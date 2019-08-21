@@ -26,23 +26,23 @@ while [ "$#" != 0 ]; do
         --openjdk )
             openjdk_version="last"
             ;;
-#        --scala=* )
-#            scala_version="${1#*=}"
-#            ;;
-#        --scala )
-#            scala_version="last"
-#            ;;
+        --scala=* )
+            scala_version="${1#*=}"
+            ;;
+        --scala )
+            scala_version="last"
+            ;;
+        --maven=* )
+            maven_version="${1#*=}"
+            ;;
+        --maven )
+            maven_version="last"
+            ;;
 #        --drill=* )
 #            drill_version="${1#*=}"
 #            ;;
 #        --drill )
 #            drill_version="last"
-#            ;;
-#        --maven=* )
-#            maven_version="${1#*=}"
-#            ;;
-#        --maven )
-#            maven_version="last"
 #            ;;
 #        --parquet-tools=* )
 #            parquet_tools_version="${1#*=}"
@@ -50,12 +50,12 @@ while [ "$#" != 0 ]; do
 #        --parquet-tools )
 #            parquet_tools_version="last"
 #            ;;
-#        --python=* )
-#            python_version="${1#*=}"
-#            ;;
-#        --python )
-#            python_version="last"
-#            ;;
+        --python=* )
+            python_version="${1#*=}"
+            ;;
+        --python )
+            python_version="last"
+            ;;
         --* )
             echo "Option \`${1}\` is not supported." >&1
             exit 1
@@ -101,21 +101,21 @@ case "$command" in
     "jshell" )
         openjdk_version=${openjdk_version:-last}
         ;;
-#    "mvn" )
-#        maven_version=${maven_version:-last}
-#        ;;
+    "mvn" )
+        maven_version=${maven_version:-last}
+        ;;
 #    "parquet-tools" )
 #        parquet_tools_version=${parquet_tools_version:-last}
 #        ;;
-#    "python" )
-#        python_version=${python_version:-last}
-#        ;;
-#    "pipenv" )
-#        python_version=${python_version:-last}
-#        ;;
-#    "scala" )
-#        scala_version=${scala_version:-last}
-#        ;;
+    "python" )
+        python_version=${python_version:-last}
+        ;;
+    "pipenv" )
+        python_version=${python_version:-last}
+        ;;
+    "scala" )
+        scala_version=${scala_version:-last}
+        ;;
     "serialver" )
         openjdk_version=${openjdk_version:-last}
         ;;
@@ -123,13 +123,7 @@ case "$command" in
         ;;
 esac
 
-#if [ -n "${scala_version:-}" ]; then
-#    openjdk_version=${openjdk_version:-last}
-#fi
 #if [ -n "${drill_version:-}" ]; then
-#    openjdk_version=${openjdk_version:-last}
-#fi
-#if [ -n "${maven_version:-}" ]; then
 #    openjdk_version=${openjdk_version:-last}
 #fi
 #if [ -n "${parquet_tools_version:-}" ]; then
@@ -138,24 +132,31 @@ esac
 #fi
 
 if [ -n "${openjdk_version:-}" ]; then
-    . $MULANG_SOURCE_DIR/install-openjdk.sh $openjdk_version install
-    . $MULANG_SOURCE_DIR/install-openjdk.sh $openjdk_version env
+    . $MULANG_SOURCE_DIR/install-openjdk.sh
+    install_openjdk $openjdk_version install
+    . <(install_openjdk $openjdk_version env)
 fi
-#if [ -n "${scala_version:-}" ]; then
-#    . $MULANG_SOURCE_DIR/install-scala.sh
-#fi
+if [ -n "${scala_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-scala.sh
+    install_scala $scala_version install
+    . <(install_scala $scala_version env)
+fi
+if [ -n "${maven_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-maven.sh
+    install_maven $maven_version install
+    . <(install_maven $maven_version env)
+fi
 #if [ -n "${drill_version:-}" ]; then
 #    . $MULANG_SOURCE_DIR/install-drill.sh
-#fi
-#if [ -n "${maven_version:-}" ]; then
-#    . $MULANG_SOURCE_DIR/install-maven.sh
 #fi
 #if [ -n "${parquet_tools_version:-}" ]; then
 #    . $MULANG_SOURCE_DIR/install-parquet-tools.sh
 #fi
-#if [ -n "${python_version:-}" ]; then
-#    . $MULANG_SOURCE_DIR/install-python.sh
-#fi
+if [ -n "${python_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-python.sh
+    install_python $python_version install
+    . <(install_python $python_version env)
+fi
 
 if ! which "$command" >/dev/null; then
     echo "Not found: $command" >&2

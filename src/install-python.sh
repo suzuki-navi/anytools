@@ -1,41 +1,51 @@
 
+install_python () {
+
+local version=$1
+local action=$2
+
 ####################################################################################################
 # バージョン管理
 ####################################################################################################
 
 # https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build
 
-LAST_PYTHON_VERSION=3.7.4
-
-if [ $python_version = "last" ]; then
-    python_version=$LAST_PYTHON_VERSION
+if [ ${version:-last} = "last" ]; then
+    version=3.7.4
 fi
 
 ####################################################################################################
-# インストールと実行環境設定
+# インストール
 ####################################################################################################
 
-export PYENV_ROOT=$HOME/.pyenv
+local pyenv_root=$HOME/.pyenv
 
-(
-    if [ -e $PYENV_ROOT/bin/pyenv ]; then
-        (cd $PYENV_ROOT; git pull -q)
+if [ $action = install -a ! -x "$pyenv_root/versions/$version/bin/pipenv" ]; then (
+    if [ -e $pyenv_root/bin/pyenv ]; then
+        (cd $pyenv_root; git pull -q)
     else
-        git clone git://github.com/yyuu/pyenv.git $PYENV_ROOT
+        git clone git://github.com/yyuu/pyenv.git $pyenv_root
     fi
 
-    if [ ! -e $PYENV_ROOT/versions/$python_version/bin/python ]; then
-        $PYENV_ROOT/bin/pyenv install -s -v $python_version
+    if [ ! -e $pyenv_root/versions/$version/bin/python ]; then
+        $pyenv_root/bin/pyenv install -s -v $version
     fi
-    if [ ! -e $PYENV_ROOT/versions/$python_version/bin/pipenv ]; then
-        $PYENV_ROOT/versions/$python_version/bin/pip install --upgrade pip
-        $PYENV_ROOT/versions/$python_version/bin/pip install pipenv
+    if [ ! -e $pyenv_root/versions/$version/bin/pipenv ]; then
+        $pyenv_root/versions/$version/bin/pip install --upgrade pip
+        $pyenv_root/versions/$version/bin/pip install pipenv
     fi
-) >&2
-
-export PATH="$PYENV_ROOT/versions/$python_version/bin:$PATH"
-
-#export PYENV_VERSION=$python_version
-#export PATH="$PYENV_ROOT/shims:$PATH"
+) >&2; fi
 
 ####################################################################################################
+# 実行環境設定
+####################################################################################################
+
+if [ $action = env ]; then
+    echo "export PYENV_ROOT=\"$pyenv_root\""
+    echo "export PATH=\"\$PYENV_ROOT/versions/$version/bin:\$PATH\""
+fi
+
+####################################################################################################
+
+}
+
