@@ -56,6 +56,9 @@ while [ "$#" != 0 ]; do
         --python )
             python_version="last"
             ;;
+        --awscli )
+            awscli_version="last"
+            ;;
         --* )
             echo "Option \`${1}\` is not supported." >&1
             exit 1
@@ -80,6 +83,9 @@ else
 fi
 
 case "$command" in
+    "aws" )
+        awscli_version=${awscli_version:-last}
+        ;;
 #    "drill-embedded" )
 #        drill_version=${drill_version:-last}
 #        ;;
@@ -156,6 +162,11 @@ if [ -n "${python_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-python.sh
     install_python $python_version install
     . <(install_python $python_version env)
+fi
+if [ -n "${awscli_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-awscli.sh
+    install_awscli $awscli_version install
+    . <(install_awscli $awscli_version env)
 fi
 
 if ! which "$command" >/dev/null; then
