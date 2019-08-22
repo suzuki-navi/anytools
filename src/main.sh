@@ -44,12 +44,12 @@ while [ "$#" != 0 ]; do
 #        --drill )
 #            drill_version="last"
 #            ;;
-#        --parquet-tools=* )
-#            parquet_tools_version="${1#*=}"
-#            ;;
-#        --parquet-tools )
-#            parquet_tools_version="last"
-#            ;;
+        --parquet-tools=* )
+            parquet_tools_version="${1#*=}"
+            ;;
+        --parquet-tools )
+            parquet_tools_version="last"
+            ;;
         --python=* )
             python_version="${1#*=}"
             ;;
@@ -125,9 +125,9 @@ case "$command" in
     "mvn" )
         maven_version=${maven_version:-last}
         ;;
-#    "parquet-tools" )
-#        parquet_tools_version=${parquet_tools_version:-last}
-#        ;;
+    "parquet-tools" )
+        parquet_tools_version=${parquet_tools_version:-last}
+        ;;
     "python" )
         python_version=${python_version:-last}
         ;;
@@ -170,9 +170,11 @@ fi
 #if [ -n "${drill_version:-}" ]; then
 #    . $MULANG_SOURCE_DIR/install-drill.sh
 #fi
-#if [ -n "${parquet_tools_version:-}" ]; then
-#    . $MULANG_SOURCE_DIR/install-parquet-tools.sh
-#fi
+if [ -n "${parquet_tools_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-parquet_tools.sh
+    install_parquet_tools $parquet_tools_version install
+    . <(install_parquet_tools $parquet_tools_version env)
+fi
 if [ -n "${python_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-python.sh
     install_python $python_version install

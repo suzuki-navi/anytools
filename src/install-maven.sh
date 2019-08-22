@@ -45,7 +45,7 @@ if [ $action = install -a ! -x "$PREFIX/maven-${version}/bin/mvn" ]; then (
 ####################################################################################################
 
 if [ $action = env ]; then
-    [ -z "${openjdk_version:-}" ] && install_openjdk last env
+    [ -z "${JAVA_HOME:-}" ] && install_openjdk last env
 
     echo "export PATH=\"$PREFIX/maven-${version}/bin:\$PATH\""
 fi

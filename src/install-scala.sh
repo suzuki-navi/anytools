@@ -45,7 +45,7 @@ if [ $action = install -a ! -x "$PREFIX/scala-${version}/bin/scala" ]; then (
 ####################################################################################################
 
 if [ $action = env ]; then
-    [ -z "${openjdk_version:-}" ] && install_openjdk last env
+    [ -z "${JAVA_HOME:-}" ] && install_openjdk last env
 
     echo "export SCALA_HOME=\"$PREFIX/scala-${version}\""
     echo "export PATH=\"\$SCALA_HOME/bin:\$PATH\""
