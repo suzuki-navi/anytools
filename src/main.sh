@@ -59,6 +59,9 @@ while [ "$#" != 0 ]; do
         --awscli )
             awscli_version="last"
             ;;
+        --jupyter )
+            jupyter_version="last"
+            ;;
         --jq=* )
             jq_version="${1#*=}"
             ;;
@@ -115,6 +118,9 @@ case "$command" in
         ;;
     "jshell" )
         openjdk_version=${openjdk_version:-last}
+        ;;
+    "jupyter" )
+        jupyter_version=${jupyter_version:-last}
         ;;
     "mvn" )
         maven_version=${maven_version:-last}
@@ -176,6 +182,11 @@ if [ -n "${awscli_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-awscli.sh
     install_awscli $awscli_version install
     . <(install_awscli $awscli_version env)
+fi
+if [ -n "${jupyter_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-jupyter.sh
+    install_jupyter $jupyter_version install
+    . <(install_jupyter $jupyter_version env)
 fi
 if [ -n "${jq_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-jq.sh
