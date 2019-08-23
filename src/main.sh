@@ -62,6 +62,12 @@ while [ "$#" != 0 ]; do
         --jupyter )
             jupyter_version="last"
             ;;
+        --gcpcli=* )
+            gcpcli_version="${1#*=}"
+            ;;
+        --gcpcli )
+            gcpcli_version="last"
+            ;;
         --jq=* )
             jq_version="${1#*=}"
             ;;
@@ -98,6 +104,12 @@ case "$command" in
 #    "drill-embedded" )
 #        drill_version=${drill_version:-last}
 #        ;;
+    "gcloud" )
+        gcpcli_version=${awscli_version:-last}
+        ;;
+    "gsutil" )
+        gcpcli_version=${awscli_version:-last}
+        ;;
     "jar" )
         openjdk_version=${openjdk_version:-last}
         ;;
@@ -189,6 +201,11 @@ if [ -n "${jupyter_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-jupyter.sh
     install_jupyter $jupyter_version install
     . <(install_jupyter $jupyter_version env)
+fi
+if [ -n "${gcpcli_version:-}" ]; then
+    . $MULANG_SOURCE_DIR/install-gcpcli.sh
+    install_gcpcli $gcpcli_version install
+    . <(install_gcpcli $gcpcli_version env)
 fi
 if [ -n "${jq_version:-}" ]; then
     . $MULANG_SOURCE_DIR/install-jq.sh

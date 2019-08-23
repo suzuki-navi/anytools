@@ -12,6 +12,8 @@ local action=$2
 
 if [ ${version:-last} = "last" ]; then
     version=3.7.4
+elif [ ${version:-last} = 2 ]; then
+    version=2.7.16
 fi
 
 ####################################################################################################
