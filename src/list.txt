@@ -1,0 +1,11 @@
+openjdk: jar,java,javac,javadoc,javap,jshell,serialver
+scala: scala
+maven: mvn
+python: python,pipenv
+
+parquet_tools: parquet-tools
+jupyter: jupyter
+awscli: aws
+gcpcli: gcloud,gsutil
+jq: jq
+
