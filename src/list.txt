@@ -2,6 +2,7 @@ openjdk: jar,java,javac,javadoc,javap,jshell,serialver
 scala: scala
 maven: mvn
 sbt: sbt
+graalvm: native-image
 python: python,pipenv
 
 parquet_tools: parquet-tools
