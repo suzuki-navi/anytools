@@ -27,12 +27,12 @@ if [ $action = install -a ! -x "$rbenv_root/versions/$version/bin/rbenv" ]; then
     export RBENV_ROOT="$rbenv_root"
 
     if [ -e $rbenv_root/bin/rbenv ]; then
-        (cd $rbenv_root; git pull -q)
+        : #(cd $rbenv_root; git pull -q)
     else
         git clone https://github.com/rbenv/rbenv.git $rbenv_root
     fi
     if [ -e $rbenv_root/plugins/ruby-build/bin/rbenv-install ]; then
-        (cd $rbenv_root/plugins/ruby-build; git pull -q)
+        : #(cd $rbenv_root/plugins/ruby-build; git pull -q)
     else
         git clone https://github.com/rbenv/ruby-build.git $rbenv_root/plugins/ruby-build
     fi

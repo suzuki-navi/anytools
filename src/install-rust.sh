@@ -22,7 +22,7 @@ toolchain_list=$(
     export RUSTUP_HOME="$PREFIX/rust"
     export CARGO_HOME="$PREFIX/rust"
     if [ -x $RUSTUP_HOME/bin/rustup ]; then
-        $RUSTUP_HOME/bin/rustup toolchain list
+        : #$RUSTUP_HOME/bin/rustup toolchain list
     fi
 )
 
@@ -31,7 +31,7 @@ if [ $action = install ] && ! ( echo "$toolchain_list" | grep "^${version}-" >/d
     export CARGO_HOME="$PREFIX/rust"
 
     if [ -x "$RUSTUP_HOME/bin/rustup" ]; then
-        "$RUSTUP_HOME/bin/rustup" self update 2>/dev/null
+        : #"$RUSTUP_HOME/bin/rustup" self update 2>/dev/null
     else
         curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y --default-toolchain none
     fi

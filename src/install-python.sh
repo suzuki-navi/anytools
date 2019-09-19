@@ -31,7 +31,7 @@ local pyenv_root=$HOME/.pyenv
 
 if [ $action = install -a ! -x "$pyenv_root/versions/$version/bin/pipenv" ]; then (
     if [ -e $pyenv_root/bin/pyenv ]; then
-        (cd $pyenv_root; git pull -q)
+        : #(cd $pyenv_root; git pull -q)
     else
         git clone git://github.com/yyuu/pyenv.git $pyenv_root
     fi
