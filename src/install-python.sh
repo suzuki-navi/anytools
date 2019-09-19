@@ -1,4 +1,11 @@
 
+# Ubuntuでは以下のパッケージが必要
+# zlib1g-dev
+# libffi-dev
+# libssl-dev
+# libsqlite3-dev
+# libbz2-dev
+
 install_python () {
 
 local version=$1

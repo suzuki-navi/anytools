@@ -4,6 +4,7 @@ maven: mvn
 sbt: sbt
 graalvm: native-image
 python: python,pipenv
+ruby: bundle,bundler,rbenv,ruby
 rust: cargo,rustc,rustdoc,rustfmt,rustup
 
 parquet_tools: parquet-tools
